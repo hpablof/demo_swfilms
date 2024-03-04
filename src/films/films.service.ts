@@ -82,8 +82,12 @@ export class FilmsService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} film`;
+  async remove(id: string) {
+    try {
+      return await this.filmsRepository.delete(id);
+    } catch (error) {
+      this.manageDBExeptions(error)
+    }
   }
 
   private manageDBExeptions(error: any) {
