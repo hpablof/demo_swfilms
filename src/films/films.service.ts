@@ -74,8 +74,12 @@ export class FilmsService {
     return film;
   }
 
-  update(id: number, updateFilmDto: UpdateFilmDto) {
-    return `This action updates a #${id} film`;
+  async update(id: string, updateFilmDto: UpdateFilmDto) {
+    try {
+      return await this.filmsRepository.update(id, updateFilmDto);
+    } catch (error) {
+      this.manageDBExeptions(error);
+    }
   }
 
   remove(id: number) {
@@ -83,8 +87,9 @@ export class FilmsService {
   }
 
   private manageDBExeptions(error: any) {
-    this.logger.error(error.message, error.stack);
+    this.logger.error(error.code, error.message, error.stack);
     if (error.code === '23505') throw new BadRequestException(error.detail);
+    if (error.code === '22P02') throw new BadRequestException(error.message);
     throw new InternalServerErrorException('Internal Server Error');
 
   }
